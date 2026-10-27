@@ -20,8 +20,9 @@ npm run preview   # serve the build locally
 
 ## Behaviour
 
-- **Which menu opens:** `?menu=breakfast` / `?menu=lunch` in the URL wins. Otherwise the visitor's last choice in the
-  same session, otherwise Cairo time: breakfast 7:00 AM to 2:00 PM, lunch the rest of the day.
+- **Which menu opens:** `?menu=breakfast` / `?menu=lunch` in the URL wins. Otherwise Cairo time: breakfast 7:00 AM
+  to 2:00 PM, lunch the rest of the day. If the page stays open across 7 AM or 2 PM it switches by itself, unless the
+  visitor tapped the other tab (that choice is forgotten after 30 minutes in the background).
 - **`strictBreakfastHours`** (config): `false` means everything can be ordered any time. `true` greys out breakfast
   items outside breakfast hours.
 - **Cart** is saved on the visitor's phone for 6 hours. It can be sent on WhatsApp (`config.whatsapp`, set to

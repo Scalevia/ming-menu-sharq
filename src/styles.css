@@ -1,6 +1,6 @@
 /* Ming Burger · El Qantara East
    American diner: ketchup red + the logo's blue on cream, with the red/white checker from the printed menus.
-   No mustard yellow, by request. Dark mode is "diner after dark": navy built from the logo blue. */
+   No mustard yellow and no dark mode, by request. */
 
 :root {
   --bg: #fff6ea;
@@ -35,52 +35,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1430;
-    --surface: #172045;
-    --ink: #f7efe4;
-    --muted: #a5adca;
-    --line: #253058;
-    --red: #ff4a4f;
-    --red-press: #e8383d;
-    --on-red: #ffffff;
-    --red-soft: #3a1c2c;
-    --blue: #8caaea;
-    --on-blue: #0e1430;
-    --blue-soft: #1d2a56;
-    --tile: #1f2a54;
-    --head-bg: #b81d23;
-    --checker: #0e1430;
-    --live: #4ade80;
-    --soon: #ff6b6f;
-    --scrim: rgb(0 0 0 / 0.6);
-    --shadow: 0 12px 28px -14px rgb(0 0 0 / 0.7);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0e1430;
-  --surface: #172045;
-  --ink: #f7efe4;
-  --muted: #a5adca;
-  --line: #253058;
-  --red: #ff4a4f;
-  --red-press: #e8383d;
-  --on-red: #ffffff;
-  --red-soft: #3a1c2c;
-  --blue: #8caaea;
-  --on-blue: #0e1430;
-  --blue-soft: #1d2a56;
-  --tile: #1f2a54;
-  --head-bg: #b81d23;
-  --checker: #0e1430;
-  --live: #4ade80;
-  --soon: #ff6b6f;
-  --scrim: rgb(0 0 0 / 0.6);
-  --shadow: 0 12px 28px -14px rgb(0 0 0 / 0.7);
-  color-scheme: dark;
-}
 
 /* ---------- base ---------- */
 *,
@@ -197,12 +151,6 @@ a {
   color: var(--ink);
   cursor: pointer;
 }
-.icon-btn.on-red {
-  align-self: flex-start;
-  background: rgb(255 255 255 / 0.14);
-  border-color: rgb(255 255 255 / 0.3);
-  color: var(--on-red);
-}
 
 /* ---------- sticky bar: toggle, status, chips ---------- */
 .bar {
@@ -258,7 +206,7 @@ a {
   background: var(--surface);
   color: var(--ink);
   padding: 0 16px;
-  font: 15px var(--f-body);
+  font: 16px var(--f-body); /* under 16px iOS zooms in on focus */
 }
 .search-field input::-webkit-search-cancel-button {
   display: none;
@@ -1054,34 +1002,6 @@ a {
   letter-spacing: 0.03em;
   color: var(--red);
 }
-.split {
-  padding: 14px;
-  border-radius: var(--r);
-  background: var(--blue-soft);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.split-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  color: var(--blue);
-}
-.split-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.split-result {
-  margin: 0;
-  font-size: 14px;
-}
-.split-result b {
-  font: 400 22px var(--f-latin);
-  letter-spacing: 0.03em;
-}
 .cart-actions {
   display: flex;
   flex-direction: column;
@@ -1313,6 +1233,59 @@ a {
 .slot-name small {
   display: block;
   font-size: 18px;
+}
+
+/* notes */
+.note-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.note-field label {
+  font-weight: 700;
+  font-size: 14px;
+}
+.note-field label small {
+  font-weight: 400;
+  color: var(--muted);
+}
+.note-field textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 64px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: 16px/1.5 var(--f-body); /* under 16px iOS zooms in on focus */
+}
+.note-field textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+.note-field textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+.line-note {
+  color: var(--blue) !important;
+  font-weight: 500;
+}
+.cashier-note {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  border: 2px dashed var(--blue);
+  background: var(--blue-soft);
+  font-size: 18px;
+  line-height: 1.5;
+}
+.cashier-note b {
+  font-size: 14px;
+  color: var(--blue);
 }
 
 /* line-art food (see ui/icons.js) */

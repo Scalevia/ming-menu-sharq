@@ -1,7 +1,7 @@
 import "./styles.css";
 import { config } from "./config.js";
 import { menus, minPrice } from "./data/menu.js";
-import { cart, load, save } from "./lib/store.js";
+import { cart } from "./lib/store.js";
 import { defaultMenuId, menuStatus, clock } from "./lib/time.js";
 import { money, esc, normalize } from "./lib/format.js";
 import { icon } from "./ui/icons.js";
@@ -11,33 +11,15 @@ import { openBudget, openRandom } from "./ui/tools.js";
 const $ = (s, root = document) => root.querySelector(s);
 
 /* ---------- which menu opens ---------- */
-// ?menu=breakfast|lunch (for dedicated QR codes) > the visitor's choice this session > Cairo time
+// ?menu=breakfast|lunch (the labelled QR codes) wins; otherwise Cairo time decides, and keeps deciding
+// while the page is open, until the visitor picks a tab themselves.
 const urlMenu = new URLSearchParams(location.search).get("menu");
-let sessionMenu = null;
-try {
-  sessionMenu = sessionStorage.getItem("ming-menu");
-} catch {}
-let current = menus[urlMenu] ? urlMenu : menus[sessionMenu] ? sessionMenu : defaultMenuId();
+const pinned = Boolean(menus[urlMenu]);
+let current = pinned ? urlMenu : defaultMenuId();
+let userPicked = false;
 let query = "";
 
-/* ---------- theme ---------- */
 const root = document.documentElement;
-const savedTheme = load("ming-theme", null);
-if (savedTheme) root.dataset.theme = savedTheme;
-const isDark = () =>
-  root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-function paintThemeButton() {
-  const btn = $("#theme-btn");
-  btn.innerHTML = icon(isDark() ? "sun" : "moon");
-  btn.setAttribute("aria-label", isDark() ? "الوضع الفاتح" : "الوضع الليلي");
-  $('meta[name="theme-color"]').content = getComputedStyle(root).getPropertyValue("--head-bg").trim();
-}
-$("#theme-btn").addEventListener("click", () => {
-  root.dataset.theme = isDark() ? "light" : "dark";
-  save("ming-theme", root.dataset.theme);
-  paintThemeButton();
-});
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintThemeButton);
 
 /* ---------- static bits ---------- */
 $("#branch-name").textContent = config.branch.name;
@@ -67,9 +49,7 @@ toggle.addEventListener("click", (e) => {
   const b = e.target.closest("[data-menu]");
   if (!b || b.dataset.menu === current) return;
   current = b.dataset.menu;
-  try {
-    sessionStorage.setItem("ming-menu", current);
-  } catch {}
+  userPicked = true;
   renderAll();
   window.scrollTo({ top: 0, behavior: "instant" });
 });
@@ -261,6 +241,20 @@ function renderAll() {
 renderAll();
 renderCartBar();
 cartBar.classList.remove("bump");
-paintThemeButton();
-// Keep the countdown honest while the page stays open
-setInterval(renderStatus, 30_000);
+// Follow the clock while the page stays open: at 7 AM / 2 PM the right tab opens by itself
+function followClock() {
+  const due = defaultMenuId();
+  if (!pinned && !userPicked && due !== current) {
+    current = due;
+    renderAll();
+  } else renderStatus();
+}
+setInterval(followClock, 30_000);
+
+// Phones freeze timers in background tabs. Coming back after a while counts as a fresh visit.
+let hiddenAt = 0;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) return void (hiddenAt = Date.now());
+  if (Date.now() - hiddenAt > 30 * 60_000) userPicked = false;
+  followClock();
+});

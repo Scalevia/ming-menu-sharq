@@ -29,7 +29,7 @@ export function openBudget(menuId) {
     variant: "budget-sheet",
     body(panel) {
       panel.innerHTML = `
-        <p class="sheet-lede">اكتب المبلغ اللي معاك ونوريك تقدر تاخد إيه من منيو ال${menus[menuId].label}.</p>
+        <p class="sheet-lede">اكتب المبلغ اللي معاك ونوريك تقدر تطلب إيه من منيو ال${menus[menuId].label}.</p>
         <div class="budget-input">
           <label for="budget">المبلغ</label>
           <input id="budget" type="number" inputmode="numeric" min="0" step="5" value="${lastBudget}">

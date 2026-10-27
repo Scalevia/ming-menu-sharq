@@ -24,7 +24,7 @@ const stepper = (value, label) => `
 export function openItem(id) {
   const { item, menu, category } = findItem(id);
   const { orderable, text: closedText } = menuStatus(menu.id);
-  const state = { variant: item.variants?.[0].id ?? null, combo: false, qty: 1 };
+  const state = { variant: item.variants?.[0].id ?? null, combo: false, qty: 1, note: "" };
   const unit = () => itemPrice(item, state.variant) + (state.combo ? config.comboPrice : 0);
 
   sheet.open({
@@ -62,6 +62,14 @@ export function openItem(id) {
                 </label>`
               : ""
           }
+          ${
+            orderable
+              ? `<div class="note-field">
+                  <label for="item-note">ملاحظات على الصنف <small>(اختياري)</small></label>
+                  <textarea id="item-note" rows="2" maxlength="140" placeholder="مثلاً: من غير بصل، صوص زيادة">${esc(state.note)}</textarea>
+                </div>`
+              : ""
+          }
           <div class="sheet-actions">
             ${stepper(state.qty, "الكمية")}
             ${
@@ -78,12 +86,16 @@ export function openItem(id) {
         if (v) state.variant = v.dataset.variant;
         else if (s) state.qty = Math.max(1, Math.min(20, state.qty + Number(s.dataset.step)));
         else if (e.target.closest("[data-add]")) {
-          cart.add({ id: item.id, variant: state.variant, combo: state.combo, qty: state.qty });
+          cart.add({ id: item.id, variant: state.variant, combo: state.combo, qty: state.qty, note: state.note });
           sheet.close();
           toast(`اتضاف ${item.ar} للطلب`);
           return;
         } else return;
         render();
+      });
+      // Kept in state (not re-rendered) so typing never loses focus
+      panel.addEventListener("input", (e) => {
+        if (e.target.id === "item-note") state.note = e.target.value;
       });
       panel.addEventListener("change", (e) => {
         if (e.target.id === "combo-toggle") {
@@ -97,19 +109,22 @@ export function openItem(id) {
 
 /* ---------- cart ---------- */
 
-let people = 1;
-
 function orderText() {
   const rows = cart
     .lines()
     .map((l) => {
       const { item } = findItem(l.id);
       const d = lineDetails(l);
-      return `• ${l.qty}× ${item.ar}${d ? ` (${d})` : ""}: ${money(lineTotal(l))}`;
+      return `• ${l.qty}× ${item.ar}${d ? ` (${d})` : ""}: ${money(lineTotal(l))}${l.note ? `\n   ملاحظة: ${l.note}` : ""}`;
     })
     .join("\n");
-  return `طلب جديد من منيو مينج، ${config.branch.name}\n\n${rows}\n\nالإجمالي: ${money(cart.total())}`;
+  const note = cart.note().trim();
+  return `طلب جديد من منيو مينج، ${config.branch.name}\n\n${rows}\n\nالإجمالي: ${money(cart.total())}${
+    note ? `\n\nملاحظات على الطلب: ${note}` : ""
+  }`;
 }
+
+const waLink = () => `https://wa.me/${config.whatsapp}?text=${encodeURIComponent(orderText())}`;
 
 function cartBody(panel) {
   const lines = cart.lines();
@@ -122,8 +137,6 @@ function cartBody(panel) {
       </div>`;
     return;
   }
-  const total = cart.total();
-  const each = Math.ceil(total / people);
   panel.innerHTML = `
     <ul class="cart-lines">${lines
       .map((l) => {
@@ -133,6 +146,7 @@ function cartBody(panel) {
           <div class="cart-line-text">
             <b>${esc(item.ar)}</b>
             ${d ? `<small>${esc(d)}</small>` : ""}
+            ${l.note ? `<small class="line-note">ملاحظة: ${esc(l.note)}</small>` : ""}
             <span class="num price-sm">${money(lineTotal(l))}</span>
           </div>
           ${stepper(l.qty, `كمية ${esc(item.ar)}`)}
@@ -140,26 +154,17 @@ function cartBody(panel) {
       })
       .join("")}</ul>
 
-    <div class="total-row"><span>الإجمالي</span><b class="num">${money(total)}</b></div>
+    <div class="total-row"><span>الإجمالي</span><b class="num">${money(cart.total())}</b></div>
 
-    <div class="split">
-      <div class="split-label">${icon("users")}<span>هتقسموا الحساب على كام؟</span></div>
-      <div class="split-row">
-        <div class="stepper" role="group" aria-label="عدد الأشخاص">
-          <button type="button" data-people="1" aria-label="زوّد">${icon("plus")}</button>
-          <output>${people}</output>
-          <button type="button" data-people="-1" aria-label="قلّل">${icon("minus")}</button>
-        </div>
-        <p class="split-result">${
-          people > 1 ? `كل واحد يدفع <b class="num">${money(each)}</b>` : "زوّد العدد لو انتو أكتر من واحد"
-        }</p>
-      </div>
+    <div class="note-field">
+      <label for="order-note">ملاحظات على الطلب <small>(اختياري)</small></label>
+      <textarea id="order-note" rows="2" maxlength="300" placeholder="مثلاً: تيك أواي، هاجي الساعة 3">${esc(cart.note())}</textarea>
     </div>
 
     <div class="cart-actions">
       ${
         config.whatsapp
-          ? `<a class="btn btn-whatsapp" href="https://wa.me/${config.whatsapp}?text=${encodeURIComponent(orderText())}" target="_blank" rel="noopener">${icon("whatsapp")}ابعت الطلب واتساب</a>`
+          ? `<a class="btn btn-whatsapp" href="${waLink()}" target="_blank" rel="noopener" data-wa>${icon("whatsapp")}ابعت الطلب واتساب</a>`
           : ""
       }
       <button type="button" class="btn btn-ghost" data-cashier>${icon("receipt")}اعرضه للكاشير</button>
@@ -178,17 +183,20 @@ export function openCart() {
     body(p) {
       panel = p;
       cartBody(p);
+      p.addEventListener("input", (e) => {
+        if (e.target.id !== "order-note") return;
+        cart.setNote(e.target.value);
+        // the WhatsApp message carries the note, so refresh its link in place
+        const wa = p.querySelector("[data-wa]");
+        if (wa) wa.href = waLink();
+      });
       p.addEventListener("click", (e) => {
         const step = e.target.closest("[data-step]");
-        const ppl = e.target.closest("[data-people]");
         const clear = e.target.closest("[data-clear]");
         if (step) {
           const key = step.closest("li").dataset.key;
           const line = cart.lines().find((l) => l.key === key);
           cart.setQty(key, line.qty + Number(step.dataset.step));
-        } else if (ppl) {
-          people = Math.max(1, Math.min(20, people + Number(ppl.dataset.people)));
-          rerender();
         } else if (clear) {
           // Two taps to clear, since the viewer can't undo it
           if (clear.dataset.armed) cart.clear();
@@ -216,9 +224,12 @@ function openCashier() {
         .map((l) => {
           const { item } = findItem(l.id);
           const d = lineDetails(l);
-          return `<li><span class="num qty">${l.qty}×</span><span>${esc(item.ar)}${d ? `<small>${esc(d)}</small>` : ""}</span><b class="num">${money(lineTotal(l))}</b></li>`;
+          return `<li><span class="num qty">${l.qty}×</span><span>${esc(item.ar)}${d ? `<small>${esc(d)}</small>` : ""}${
+            l.note ? `<small class="line-note">ملاحظة: ${esc(l.note)}</small>` : ""
+          }</span><b class="num">${money(lineTotal(l))}</b></li>`;
         })
         .join("")}</ul>
+      ${cart.note().trim() ? `<div class="cashier-note"><b>ملاحظات على الطلب</b>${esc(cart.note())}</div>` : ""}
       <div class="cashier-total"><span>الإجمالي</span><b class="num">${money(cart.total())}</b></div>
       <button type="button" class="btn btn-ghost" data-back>رجوع للطلب</button>`,
   });
