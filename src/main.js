@@ -116,7 +116,7 @@ function renderMenu() {
           </section>`
         : `<section class="cat" id="cat-${cat.id}" data-cat="${cat.id}">
             <h2 class="cat-title">${esc(cat.ar)}<span class="latin">${esc(cat.en)}</span></h2>
-            <ul class="items">${cat.items.map((it) => itemCard(it, cat, orderable)).join("")}</ul>
+            <ul class="items">${cat.items.map((it) => itemCard(it, cat, cat.shared || orderable)).join("")}</ul>
           </section>`
     )
     .join("");
@@ -133,7 +133,8 @@ function renderSearch() {
   // Current menu first, so the other menu's results come after one "من منيو ..." label
   const ordered = [menus[current], ...Object.values(menus).filter((m) => m.id !== current)];
   const hits = ordered.flatMap((menu) =>
-    menu.categories.flatMap((cat) =>
+    // shared sections (drinks, desserts) are in both menus; list them once, under the current menu
+    menu.categories.filter((cat) => !cat.shared || menu.id === current).flatMap((cat) =>
       cat.items
         .filter((it) => normalize(`${it.ar} ${it.en} ${it.desc ?? ""}`).includes(q))
         .map((it) => ({ it, cat, menu }))
@@ -147,7 +148,7 @@ function renderSearch() {
             ({ it, cat, menu }, i) =>
               (menu.id !== current && hits[i - 1]?.menu !== menu
                 ? `<li class="from-other">من منيو ال${menu.label}</li>`
-                : "") + itemCard(it, cat, menuStatus(menu.id).orderable)
+                : "") + itemCard(it, cat, cat.shared || menuStatus(menu.id).orderable)
           )
           .join("")}</ul></section>`
     : `<p class="no-results">مفيش حاجة باسم "<b>${esc(query)}</b>". جرّب اسم تاني أو دوّر بالإنجليزي.</p>`;

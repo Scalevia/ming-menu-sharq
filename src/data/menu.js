@@ -19,6 +19,31 @@ const smash = (d, t) => [
   { id: "triple", label: "تريبل", price: t },
 ];
 
+// Shown at the end of both menus. shared: always orderable, listed once in search.
+const sharedCategories = [
+  {
+    id: "drinks",
+    ar: "مشروبات",
+    en: "Drinks",
+    icon: "drink",
+    shared: true,
+    items: [
+      { id: "ming-mojito", ar: "مينج موهيتو", en: "Ming Mojito", price: 60 },
+      { id: "pepsi", ar: "بيبسي", en: "Pepsi", price: 25 },
+      { id: "pepsi-diet", ar: "بيبسي دايت", en: "Pepsi Diet", price: 25 },
+      { id: "red-bull", ar: "ريد بُل", en: "Red Bull", price: 65 },
+    ],
+  },
+  {
+    id: "desserts",
+    ar: "حلويات",
+    en: "Desserts",
+    icon: "cookie",
+    shared: true,
+    items: [{ id: "cookies", ar: "كوكيز", en: "Cookies", price: 60 }],
+  },
+];
+
 export const menus = {
   breakfast: {
     id: "breakfast",
@@ -72,6 +97,7 @@ export const menus = {
           },
         ],
       },
+      ...sharedCategories,
     ],
   },
 
@@ -258,6 +284,7 @@ export const menus = {
           },
         ],
       },
+      ...sharedCategories,
     ],
   },
 };

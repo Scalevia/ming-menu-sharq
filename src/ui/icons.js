@@ -31,6 +31,10 @@ const art = {
     '<path class="fl" d="M10 26h44v25a5 5 0 0 1-5 5H15a5 5 0 0 1-5-5z"/><rect class="fs" x="7" y="19" width="50" height="9" rx="2.5"/><path d="M24 19c0-7 16-7 16 0"/><path class="stripe" d="M22 34v14M32 34v14M42 34v14"/>',
   star:
     '<path class="fl" d="M32 6l7 13 14-4-4 14 13 7-13 7 4 14-14-4-7 13-7-13-14 4 4-14L2 36l13-7-4-14 14 4z"/><path class="fs" d="M32 22l3 7h7l-6 4 3 7-7-4-7 4 3-7-6-4h7z"/>',
+  drink:
+    '<path class="fl" d="M18 18h28l-3.5 37a5 5 0 0 1-5 4.5h-11a5 5 0 0 1-5-4.5z"/><rect class="fs" x="15" y="12" width="34" height="7" rx="2.5"/><path d="M35 12l4-9h7"/><path class="stripe" d="M21 34h22"/>',
+  cookie:
+    '<circle class="fs" cx="32" cy="32" r="22"/><circle class="fl" cx="24" cy="24" r="3.5"/><circle class="fl" cx="38" cy="21" r="3"/><circle class="fl" cx="41" cy="36" r="3.5"/><circle class="fl" cx="26" cy="41" r="3"/><circle class="fl" cx="33" cy="31" r="2.5"/>',
   sandwich:
     '<path class="fl" d="M6 34c0-9 12-14 26-14s26 5 26 14z"/><path class="sesame" d="M18 26l2 1M30 24v2M42 26l-2 1"/><path d="M5 38c4-3 7 3 11 0s7 3 11 0 7 3 11 0 7 3 11 0 7 3 10 0"/><path class="fl" d="M6 42h52a8 8 0 0 1-8 8H14a8 8 0 0 1-8-8z"/>',
 };

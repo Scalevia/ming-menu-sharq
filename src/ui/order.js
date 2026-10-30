@@ -23,7 +23,9 @@ const stepper = (value, label) => `
 
 export function openItem(id) {
   const { item, menu, category } = findItem(id);
-  const { orderable, text: closedText } = menuStatus(menu.id);
+  const status = menuStatus(menu.id);
+  const orderable = category.shared || status.orderable; // drinks/desserts sit in both menus
+  const closedText = status.text;
   const state = { variant: item.variants?.[0].id ?? null, combo: false, qty: 1, note: "" };
   const unit = () => itemPrice(item, state.variant) + (state.combo ? config.comboPrice : 0);
 
