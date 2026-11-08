@@ -28,10 +28,10 @@ const sharedCategories = [
     icon: "drink",
     shared: true,
     items: [
-      { id: "ming-mojito", ar: "مينج موهيتو", en: "Ming Mojito", price: 60 },
-      { id: "pepsi", ar: "بيبسي", en: "Pepsi", price: 25 },
-      { id: "pepsi-diet", ar: "بيبسي دايت", en: "Pepsi Diet", price: 25 },
-      { id: "red-bull", ar: "ريد بُل", en: "Red Bull", price: 65 },
+      { id: "ming-mojito", ar: "مينج موهيتو", en: "Ming Mojito", price: 60, image: "img/lunch/ming-mojito.webp" },
+      { id: "pepsi", ar: "بيبسي", en: "Pepsi", price: 25, image: "img/lunch/pepsi.webp" },
+      { id: "pepsi-diet", ar: "بيبسي دايت", en: "Pepsi Diet", price: 25, image: "img/lunch/pepsi-diet.webp" },
+      { id: "red-bull", ar: "ريد بُل", en: "Red Bull", price: 65, image: "img/lunch/red-bull.webp" },
     ],
   },
   {
@@ -231,6 +231,7 @@ export const menus = {
             en: "Soo Classic",
             desc: "سماشد برجر لحم بقري، جبنة أمريكي، كاتشب، خس فريش، عيش بريوش",
             variants: smash(150, 210),
+            image: "img/lunch/soo-classic.webp",
             combo: true,
           },
           {
@@ -239,6 +240,7 @@ export const menus = {
             en: "Creamy Mushroom Smash",
             desc: "سماشد برجر لحم بقري، جبنة أمريكي، كريمي مشروم، خس فريش، عيش بريوش",
             variants: smash(170, 220),
+            image: "img/lunch/creamy-mushroom-smash.webp",
             combo: true,
           },
           {
@@ -247,6 +249,7 @@ export const menus = {
             en: "Cheese Smash",
             desc: "سماشد برجر لحم بقري، جبنة أمريكي، صوص تشيزي، خس فريش، عيش بريوش",
             variants: smash(170, 220),
+            image: "img/lunch/cheese-smash.webp",
             combo: true,
           },
         ],
