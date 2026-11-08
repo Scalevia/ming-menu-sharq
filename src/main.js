@@ -252,6 +252,11 @@ function followClock() {
 }
 setInterval(followClock, 30_000);
 
+// Cache the site on the visitor's phone so the menu still opens on weak/no wifi.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+
 // Phones freeze timers in background tabs. Coming back after a while counts as a fresh visit.
 let hiddenAt = 0;
 document.addEventListener("visibilitychange", () => {
