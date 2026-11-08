@@ -28,7 +28,14 @@ const sharedCategories = [
     icon: "drink",
     shared: true,
     items: [
-      { id: "ming-mojito", ar: "مينج موهيتو", en: "Ming Mojito", price: 60, image: "img/lunch/ming-mojito.webp" },
+      {
+        id: "ming-mojito",
+        ar: "مينج موهيتو",
+        en: "Ming Mojito",
+        price: 60,
+        image: "img/lunch/ming-mojito.webp",
+        tags: ["special"],
+      },
       { id: "pepsi", ar: "بيبسي", en: "Pepsi", price: 25, image: "img/lunch/pepsi.webp" },
       { id: "pepsi-diet", ar: "بيبسي دايت", en: "Pepsi Diet", price: 25, image: "img/lunch/pepsi-diet.webp" },
       { id: "red-bull", ar: "ريد بُل", en: "Red Bull", price: 65, image: "img/lunch/red-bull.webp" },
