@@ -47,7 +47,7 @@ const sharedCategories = [
     en: "Desserts",
     icon: "cookie",
     shared: true,
-    items: [{ id: "cookies", ar: "كوكيز", en: "Cookies", price: 60 }],
+    items: [{ id: "cookies", ar: "كوكيز", en: "Cookies", price: 60, image: "img/lunch/cookies.webp" }],
   },
 ];
 
